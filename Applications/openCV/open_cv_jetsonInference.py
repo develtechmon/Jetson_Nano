@@ -7,6 +7,9 @@ width = 640
 height = 320
 
 cam= cv2.VideoCapture('nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)640, height=(int)480, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink')
+
+camx= cv2.VideoCapture('nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)640, height=(int)480, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink')
+
 #cam = cv2.VideoCapture('/dev/video0')
 #cam.set(cv2.CAP_PROP_FRAME_WIDTH, width )
 #cam.set(cv2.CAP_PROP_FRAME_HEIGHT, height )
@@ -31,6 +34,7 @@ while cam.isOpened():
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+        SystemExit(0)
 
 cam.release()
 cv2.destroyAllWindows()

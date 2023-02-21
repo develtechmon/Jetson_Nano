@@ -10,6 +10,7 @@ Adafruit_DCMotor *Motor3 = AFMS.getMotor(3);
 Adafruit_DCMotor *Motor4 = AFMS.getMotor(4);
 
 int defaultSpeed = 60;
+int sidespeed = 170;
 
 void setup() {
   Serial.begin(9600);
@@ -28,19 +29,19 @@ void loop() {
   Release();
   delay(2000);
   
-  Forward();
-  delay(1000);
-  Backward();
-  delay(1000);
-  Release();
-  delay(2000);
+  //Forward();
+  //delay(1000);
+  //Backward();
+  //delay(1000);
+  //Release();
+  //delay(2000);
 
-  RotateRight();
-  delay(1000);
-  RotateLeft();
-  delay(1000);
-  Release();
-  delay(2000);
+  //RotateRight();
+  //delay(1000);
+  //RotateLeft();
+  //delay(1000);
+  //Release();
+  //delay(2000);
 }
 
 void Backward(){
@@ -79,27 +80,27 @@ void RotateRight() {
 }
 
 void SideLeft() {
-  Motor1 -> setSpeed(200);
-  Motor2 -> setSpeed(200);
-  Motor3 -> setSpeed(200);
-  Motor4 -> setSpeed(200);
+  Motor1 -> setSpeed(sidespeed);
+  Motor2 -> setSpeed(sidespeed);
+  Motor3 -> setSpeed(sidespeed);
+  Motor4 -> setSpeed(sidespeed);
   
   Motor1 -> run(FORWARD);
   Motor2 -> run(FORWARD);
   Motor3 -> run(BACKWARD);
-  Motor4 -> run(BACKWARD); 
+  Motor4 -> run(BACKWARD); //f
   
 }
 
 void SideRight() {
-  Motor1 -> setSpeed(200);
-  Motor2 -> setSpeed(200);
-  Motor3 -> setSpeed(200);
-  Motor4 -> setSpeed(200);
+  Motor1 -> setSpeed(sidespeed);
+  Motor2 -> setSpeed(sidespeed);
+  Motor3 -> setSpeed(sidespeed);
+  Motor4 -> setSpeed(sidespeed);
   
   Motor1 -> run(BACKWARD);
   Motor2 -> run(BACKWARD);
-  Motor3 -> run(FORWARD);
-  Motor4 -> run(FORWARD); 
+  Motor3 -> run(FORWARD); 
+  Motor4 -> run(FORWARD); //b
   
 }

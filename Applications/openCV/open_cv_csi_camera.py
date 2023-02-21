@@ -27,12 +27,11 @@ def gstreamer_pipeline(
         display_height,
     )
 )
-
-#camSet = 'nvarguscamerasrc ! video/x-raw(memory:NVMM),width=3820, height=2464, framerate=21/1, format=NV12 ! nvvidconv flip-method=0 ! video/x-raw,width=960, height=616 ! nvvidconv ! nvegltransform ! nveglglessink -e'
+    
+print("Package Imported")
 
 def show_camera():
     cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
-    #cap = cv2.VideoCapture(camSet)
     if cap.isOpened():
         while True:
             success, img = cap.read()

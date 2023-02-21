@@ -35,7 +35,7 @@ SENSOR_MODE_720=3
 
 def face_detect():
     face_cascade = cv2.CascadeClassifier(
-        "/home/jlukas/Desktop/My_Project/openCV_Project/face-recognition/facedetection/Cascades/haarcascade_frontalface_default.xml"
+        "/home/jlukas/Desktop/My_Project/resources/Cascades/haarcascade_frontalface_default.xml"
     )
     #eye_cascade = cv2.CascadeClassifier(
     #    "/usr/share/opencv4/haarcascades/haarcascade_eye.xml"
