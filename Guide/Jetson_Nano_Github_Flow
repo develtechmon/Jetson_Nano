@@ -1,6 +1,8 @@
 # Push data into Github
 
 ## Getting started
+Open this [link](https://www.earthdatascience.org/workshops/intro-version-control-git/basic-git-commands/) alongside
+to start with below procedure
 
 1. git config --global user.name "Mona Lisa"
 2. git config --global user.email global-config@example.com
