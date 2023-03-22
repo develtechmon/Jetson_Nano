@@ -87,7 +87,7 @@ void SideLeft() {
   Motor1 -> run(FORWARD);
   Motor2 -> run(FORWARD);
   Motor3 -> run(BACKWARD);
-  Motor4 -> run(BACKWARD); 
+  Motor4 -> run(BACKWARD);
   
 }
 
@@ -100,6 +100,6 @@ void SideRight() {
   Motor1 -> run(BACKWARD);
   Motor2 -> run(BACKWARD);
   Motor3 -> run(FORWARD);
-  Motor4 -> run(FORWARD); 
+  Motor4 -> run(FORWARD);
   
 }
