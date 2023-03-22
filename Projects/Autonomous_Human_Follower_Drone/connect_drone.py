@@ -13,7 +13,8 @@ from dronekit import *
 #connection_string = '10.60.216.198:14550'
 
 '''Using SiTL Connection'''
-#connection_string = '127.0.0.1:14550'
+'''Run sim_vehicle.py --console --map'''
+connection_string = '127.0.0.1:14550'
 
 '''Using SiTL Connection from  different computer - This IP address below to receiver device for example RPI
    This IP address is based on given ZeroTier IP address'''
@@ -25,7 +26,7 @@ from dronekit import *
 #connection_string = '/dev/ttyTHS1,115200'
 
 ''' Using Jetson Nano USB Connection '''
-connection_string = '/dev/ttyACM0'
+#connection_string = '/dev/ttyACM0'
 
 vehicle = connect(connection_string, wait_ready = True)
 print("Virtual Copter is Ready")

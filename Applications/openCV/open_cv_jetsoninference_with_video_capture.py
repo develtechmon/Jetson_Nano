@@ -27,7 +27,7 @@ gstream_pipeline = (
         crop_bottom=INPUT_IMG_SIZE,
         crop_left=int(INPUT_IMG_SIZE * (CAM_ASPECT_RATIO - 1) / 2),
         crop_right=int(INPUT_IMG_SIZE * (CAM_ASPECT_RATIO + 1) / 2),
-        flip_method=0,
+        flip_method=2, #flip camera
         display_width=INPUT_IMG_SIZE,
         display_height=INPUT_IMG_SIZE,
     )
