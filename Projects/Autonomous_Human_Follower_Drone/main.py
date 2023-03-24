@@ -8,6 +8,7 @@ import subprocess
 from time import sleep,time
 from datetime import datetime
 from sys import exit
+import keyboard as kp
 
 from detect import *
 from camera import *
@@ -15,11 +16,14 @@ from track import *
 from config import *
 from lidar import *
 
-os.system ('echo 2328 | sudo systemctl restart nvargus-daemon')
-os.system ('echo 2328 | sudo chmod 666 /dev/ttyTHS1')
+os.system ('echo 2328 | sudo -S systemctl restart nvargus-daemon')
+os.system ('echo 2328 | sudo -S chmod 666 /dev/ttyTHS1')
 
 pError   = 0
-altitude = 1.5
+altitude = 1
+
+mode_g   = 0
+mode_l   = 0
 
 # 1st Option 
 #pid      = [0.1,0.1]
@@ -108,13 +112,22 @@ if __name__ == "__main__":
                 cv2.destroyAllWindows()
 
             elif(state.get_system_state() == "end"):
-                print("Program End !")
-
+                print("Program End !")      
+                if kp.is_pressed('g'):
+                    state.set_system_state("takeoff")
+                    state.set_airborne("off")
+                    drone.control_tab.guided()
+                        
+            # elif kp.is_pressed('g'):
+            #     state.set_system_state("takeoff")
+            #     state.set_airborne("off")
+            #     drone.control_tab.guided()
+                         
                 # Method 1 to terminate process
                 #process = subprocess.call('/home/jlukas/Desktop/My_Project/Autonomous_Human_Follower_Drone/csh/end')
 
                 # Method 2 to terminate process
-                os.system("echo 2328 | sudo -S pkill -9 -f main.py")
+                #os.system("echo 2328 | sudo -S pkill -9 -f main.py")
                 
             # elif(state.get_airborne()):
             #     lid = threading.Thread(target=distance)distance

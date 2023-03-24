@@ -39,7 +39,23 @@
  * Configure Jetson Nano to enable GUI again
     * Re-enable GUI
    - > sudo systemctl set-default graphical.target
+   
+**To run script upon boot up, please add following file into Crontab**
 
-  
+```
+
+This method will install following service
+
+$ crontab -e
+
+add following line
+@reboot echo 2328 | sudo -S /usr/bin/python3 /home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone/main.py
+
+@reboot echo 2328 | sudo -S chmod 666 /dev/ttyTHS1
+
+@reboot echo 2328 | sudo -S systemctl restart nvargus-daemon
+
+```
+
 **Run this script under your own Risk**
  

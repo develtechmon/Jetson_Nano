@@ -3,17 +3,18 @@ import socket
 from time import sleep
 from control_tab import *
 from engines import *
+import keyboard as kp
 #from read_lidar import *
 
 class Drone:
     def __init__(self):
         try:
             '''Gazebo'''
-            #self.connection_string = '192.168.8.121:14553'
+            self.connection_string = '192.168.8.121:14553'
 
             '''SiTL'''
             '''Run sim_vehicle.py --console --map'''
-            self.connection_string = '127.0.0.1:14550'
+            #self.connection_string = '127.0.0.1:14550'
             
             '''Jetson Nano TX RX'''
             #self.connection_string = '/dev/ttyTHS1,921600'
@@ -45,14 +46,18 @@ class Drone:
             print(f">> Mode Updated: {value}")
 
         ## We will not let the script to continue unless it changes to GUIDED
-        #self.vehicle.mode = VehicleMode("GUIDED")
-        while not self.vehicle.mode.name == "GUIDED":
-            sleep(1)
-                        
-        self.is_active   = True 
-        #self.lidar      = Read_Lidar(self)
-        self.engines     = Engines(self)
-        self.control_tab = controlTab(self)
+        while True:
+            if kp.is_pressed('g'):
+                print("Guided")
+                self.vehicle.mode = VehicleMode("GUIDED")
+                while not self.vehicle.mode.name == "GUIDED":
+                    sleep(1)
+                break
+                                        
+            self.is_active   = True 
+            #self.lidar      = Read_Lidar(self)
+            self.engines     = Engines(self)
+            self.control_tab = controlTab(self)
         
 
         

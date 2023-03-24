@@ -69,6 +69,12 @@ class controlTab:
                 break
             time.sleep(1)
             
+    def guided(self):
+        print("guided")
+        self.vehicle.channels.overrides = {}
+        self.vehicle.mode = VehicleMode("GUIDED")
+        #state.set_system_state("end")
+            
     def land(self):
         print("Landing")
         self.vehicle.channels.overrides = {}
