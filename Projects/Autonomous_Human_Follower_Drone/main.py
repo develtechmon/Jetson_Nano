@@ -72,7 +72,8 @@ if __name__ == "__main__":
     cam = Camera()
     curr_timestamp = int(datetime.timestamp(datetime.now()))
 
-    path = "/home/jlukas/Desktop/My_Project/Autonomous_Human_Follower_Drone/record/"
+    path = "/home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone/record/"
+    
     writer= cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 30 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
 
     det   = Detect(cam,drone)
