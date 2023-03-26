@@ -61,8 +61,8 @@ class Detect:
                     i = myobjectlistArea.index(max(myobjectlistArea))
                     return img, ID,[myobjectlistC[i],myobjectlistArea[i]]
                 
-                # else:
-                #     return img, [[0,0],0]
+                #else:
+                #    return img,ID,[[0,0],0]
                       
             else:
                 return img, ID,[[0,0],0]

@@ -74,14 +74,12 @@ if __name__ == "__main__":
 
     path = "/home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone/record/"
     
-    writer= cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 30 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
+    writer= cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 120 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
 
     det   = Detect(cam,drone)
     
     lidar = Lidar(drone,altitude)
     lidar.start()
-
-    drone.control_tab.configure_PID()
 
     state.set_system_state("takeoff")
     state.set_airborne("off")
@@ -113,17 +111,20 @@ if __name__ == "__main__":
                 cv2.destroyAllWindows()
 
             elif(state.get_system_state() == "end"):
-                print("Program End !")      
-                if kp.is_pressed('g'):
-                    state.set_system_state("takeoff")
-                    state.set_airborne("off")
-                    drone.control_tab.guided()
+                print("Program End !")  
+                state.set_system_state("takeoff")
+                state.set_airborne("off")
+                
+                print("Waiting to change to GUIDED Mode")
+                
+                while not drone.vehicle.mode.name == "GUIDED":
+                    sleep(1)
+
+                #if kp.is_pressed('g'):
+                #    state.set_system_state("takeoff")
+                #    state.set_airborne("off")
+                #    drone.control_tab.guided()
                         
-            # elif kp.is_pressed('g'):
-            #     state.set_system_state("takeoff")
-            #     state.set_airborne("off")
-            #     drone.control_tab.guided()
-                         
                 # Method 1 to terminate process
                 #process = subprocess.call('/home/jlukas/Desktop/My_Project/Autonomous_Human_Follower_Drone/csh/end')
 
@@ -140,13 +141,14 @@ if __name__ == "__main__":
             cv2.imshow("Capture",img)
             
             if cv2.waitKey(1) & 0XFF == ord('q'):
+               os.system("echo 2328 | sudo -S pkill -9 -f main.py")
                break
             
         except Exception as e:
             print(str(e))
             
     writer.release()
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
 
     # Method 1 to terminate process
     #process = subprocess.call('/home/jlukas/Desktop/My_Project/Autonomous_Human_Follower_Drone/csh/end') 

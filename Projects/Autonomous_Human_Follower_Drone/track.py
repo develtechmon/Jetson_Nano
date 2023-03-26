@@ -27,10 +27,10 @@ class Track:
             self.posXC   = int(self.pid[0]*error + self.pid[1]*(error-self.pError))
             
             # 2nd Option
-            self.posX  = int(np.interp(self.posXC, [-abs(self.w//4), abs(self.w//4)], [-15,15]))
+            #self.posX  = int(np.interp(self.posXC, [-abs(self.w//4), abs(self.w//4)], [-15,15]))
             
             # 1st Option
-            #self.posX   = int(np.clip(self.posXC, -15,15))
+            self.posX   = int(np.clip(self.posXC, -10,10))
                
             self.pError = error
             

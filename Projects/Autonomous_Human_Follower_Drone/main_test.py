@@ -81,8 +81,6 @@ if __name__ == "__main__":
     lidar = Lidar(drone,altitude)
     lidar.start()
 
-    #drone.control_tab.configure_PID()
-
     state.set_system_state("takeoff")
     state.set_airborne("off")
 
