@@ -14,13 +14,13 @@ class Drone:
 
             '''SiTL'''
             '''Run sim_vehicle.py --console --map'''
-            #self.connection_string = '127.0.0.1:14550'
+            self.connection_string = '127.0.0.1:14550'
             
             '''Jetson Nano TX RX'''
             #self.connection_string = '/dev/ttyTHS1,921600'
 
             '''Jetson Nano USB Serial'''
-            self.connection_string = '/dev/ttyACM0'
+            #self.connection_string = '/dev/ttyACM0'
             
             self.vehicle = connect(self.connection_string, wait_ready=True)
             print("Virtual Copter is ready")
@@ -46,18 +46,18 @@ class Drone:
             print(f">> Mode Updated: {value}")
 
         ## We will not let the script to continue unless it changes to GUIDED
-        while True:
-            if kp.is_pressed('g'):
-                print("Guided")
-                self.vehicle.mode = VehicleMode("GUIDED")
-                while not self.vehicle.mode.name == "GUIDED":
-                    sleep(1)
-                break
+        #while True:
+        #    if kp.is_pressed('g'):
+        #        print("Guided")
+        #        self.vehicle.mode = VehicleMode("GUIDED")
+        while not self.vehicle.mode.name == "GUIDED":
+            sleep(1)
+        #break
                                         
-            self.is_active   = True 
-            #self.lidar      = Read_Lidar(self)
-            self.engines     = Engines(self)
-            self.control_tab = controlTab(self)
+        self.is_active   = True 
+        #self.lidar      = Read_Lidar(self)
+        self.engines     = Engines(self)
+        self.control_tab = controlTab(self)
         
 
         

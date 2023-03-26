@@ -20,7 +20,7 @@ os.system ('echo 2328 | sudo -S systemctl restart nvargus-daemon')
 os.system ('echo 2328 | sudo -S chmod 666 /dev/ttyTHS1')
 
 pError   = 0
-altitude = 1
+altitude = 1.5
 
 mode_g   = 0
 mode_l   = 0
@@ -137,7 +137,7 @@ if __name__ == "__main__":
             #print(state.get_system_state(),state.get_airborne())
                       
             writer.write(img)
-            #cv2.imshow("Capture",img)
+            cv2.imshow("Capture",img)
             
             if cv2.waitKey(1) & 0XFF == ord('q'):
                break

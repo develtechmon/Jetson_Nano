@@ -9,8 +9,8 @@ class Track:
     def __init__(self,cam,D):
         # threading.Thread.__init__(self)
         self.daemon  = True
-        self.w       = 640 #cam.DISPLAY_WIDTH
-        self.h       = 480 #cam.DISPLAY_HEIGHT  
+        self.w       = cam.DISPLAY_WIDTH
+        self.h       = cam.DISPLAY_HEIGHT  
         self.engine  = D.engines 
         self.control = D.control_tab
         #self.lidar   = D.lidar
@@ -22,7 +22,7 @@ class Track:
         
         print(self.info[1])
         
-        if ((self.info[1]) !=0) and ((self.info[1]) < 28000):
+        if ((self.info[1]) !=0):
             error = self.w//2 - self.info[0][0]
             self.posXC   = int(self.pid[0]*error + self.pid[1]*(error-self.pError))
             
