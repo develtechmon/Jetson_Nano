@@ -138,7 +138,7 @@ if __name__ == "__main__":
             #print(state.get_system_state(),state.get_airborne())
                       
             writer.write(img)
-            cv2.imshow("Capture",img)
+            #cv2.imshow("Capture",img)
             
             if cv2.waitKey(1) & 0XFF == ord('q'):
                os.system("echo 2328 | sudo -S pkill -9 -f main.py")
