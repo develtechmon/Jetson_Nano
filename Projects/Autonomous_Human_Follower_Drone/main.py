@@ -4,6 +4,7 @@ import os
 import threading
 import state
 import subprocess
+import RPi.GPIO as GPIO
 
 from time import sleep,time
 from datetime import datetime
@@ -24,6 +25,8 @@ altitude = 1.5
 
 mode_g   = 0
 mode_l   = 0
+
+buzzer=19
 
 # 1st Option 
 #pid      = [0.1,0.1]
@@ -62,6 +65,7 @@ def record():
     return writer
 
 if __name__ == "__main__":
+    
     while True:
         try:
             drone = Drone()
@@ -70,7 +74,10 @@ if __name__ == "__main__":
         except Exception as e:
             print(str(e))
             sleep(2)
-        
+    
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(buzzer, GPIO.OUT, initial=GPIO.LOW)
+
     cam = Camera()
 
     writer = record()
@@ -106,6 +113,12 @@ if __name__ == "__main__":
                 drone.control_tab.land()
                 cv2.destroyAllWindows()
                 writer.release()
+                GPIO.output(buzzer,GPIO.HIGH)
+                sleep(2)
+                GPIO.output(buzzer,GPIO.LOW)
+                sleep(1)
+
+                cv2.destroyAllWindows()
 
             elif(state.get_system_state() == "end"):
                 state.set_system_state("takeoff")
