@@ -23,9 +23,6 @@ os.system ('echo 2328 | sudo -S chmod 666 /dev/ttyTHS1')
 pError   = 0
 altitude = 1.5
 
-mode_g   = 0
-mode_l   = 0
-
 buzzer=19
 
 # 1st Option 
@@ -34,6 +31,7 @@ buzzer=19
 # 2nd Option
 pid     = [0.3,0.1]
 
+# 3rd Option
 #pid     = [0.5,0.4]
 
 def takeoff():
@@ -48,7 +46,7 @@ def search(id):
             state.set_system_state("track")
     state.set_system_state("land")
     
-def track(info,drone):
+def track(info):
     #print(info[1])
     if (info[1]) != 0:
         state.set_airborne("on")
@@ -63,6 +61,9 @@ def record():
     path = "/home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone/record/"
     writer= cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 30 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
     return writer
+
+def write(frame):
+    writer.write(frame)
 
 if __name__ == "__main__":
     
@@ -96,17 +97,17 @@ if __name__ == "__main__":
             det.track.visualise(img)    
                         
             if (state.get_system_state() == "takeoff"):
-                off = threading.Thread(target=takeoff)
+                off = threading.Thread(target=takeoff, daemon=True)
                 off.start()
             
             elif(state.get_system_state() == "search"):
                 state.set_time(120)
-                sea = threading.Thread(target=search, args=(id,))
+                sea = threading.Thread(target=search, daemon=True, args=(id,))
                 sea.start()
                 
             elif(state.get_system_state() == "track"):
                 state.set_time(120)
-                tra = threading.Thread(target=track, args=(info,drone))
+                tra = threading.Thread(target=track, daemon=True, args=(info,))
                 tra.start()
                         
             elif(state.get_system_state() == "land"):
@@ -118,8 +119,6 @@ if __name__ == "__main__":
                 GPIO.output(buzzer,GPIO.LOW)
                 sleep(1)
 
-                cv2.destroyAllWindows()
-
             elif(state.get_system_state() == "end"):
                 state.set_system_state("takeoff")
                 state.set_airborne("off")
@@ -129,20 +128,14 @@ if __name__ == "__main__":
                 while not drone.vehicle.mode.name == "GUIDED":
                     sleep(1)
                 writer = record()
+            
+            print(state.get_system_state())
 
-                #if kp.is_pressed('g'):
-                #    state.set_system_state("takeoff")
-                #    state.set_airborne("off")
-                #    drone.control_tab.guided()
-                        
-                # Method 1 to terminate process
-                #process = subprocess.call('/home/jlukas/Desktop/My_Project/Autonomous_Human_Follower_Drone/csh/end')
-
-                # Method 2 to terminate process
-                #os.system("echo 2328 | sudo -S pkill -9 -f main.py")
-                
             cv2.imshow("Capture",img)
             writer.write(img)
+
+            #wri = threading.Thread(target=write,daemon=True,args=(img,))
+            #wri.start()
 
             if cv2.waitKey(1) & 0XFF == ord('q'):
                #os.system("echo 2328 | sudo -S pkill -9 -f main.py")
