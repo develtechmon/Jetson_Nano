@@ -1,4 +1,5 @@
 #! /bin/bash
 sudo systemctl set-default multi-user
 sudo systemctl disable nvzramconfig.service
+sudo nvpmodel -m 1
 #sudo nvpmodel -m 0
