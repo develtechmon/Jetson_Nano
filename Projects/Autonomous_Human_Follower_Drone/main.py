@@ -54,7 +54,7 @@ def track(info):
         
     else:
         state.set_system_state("search")
-        state.set_time(120)
+        state.set_time(60)
 
 def record():
     curr_timestamp = int(datetime.timestamp(datetime.now()))
@@ -73,7 +73,6 @@ if __name__ == "__main__":
             break
         
         except Exception as e:
-            print(str(e))
             sleep(2)
     
     GPIO.setmode(GPIO.BOARD)
@@ -101,18 +100,18 @@ if __name__ == "__main__":
                 off.start()
             
             elif(state.get_system_state() == "search"):
-                state.set_time(120)
+                state.set_time(60)
                 sea = threading.Thread(target=search, daemon=True, args=(id,))
                 sea.start()
                 
             elif(state.get_system_state() == "track"):
-                state.set_time(120)
+                state.set_time(60)
                 tra = threading.Thread(target=track, daemon=True, args=(info,))
                 tra.start()
                         
             elif(state.get_system_state() == "land"):
                 drone.control_tab.land()
-                cv2.destroyAllWindows()
+                #cv2.destroyAllWindows()
                 writer.release()
                 GPIO.output(buzzer,GPIO.HIGH)
                 sleep(2)
@@ -129,9 +128,9 @@ if __name__ == "__main__":
                     sleep(1)
                 writer = record()
             
-            print(state.get_system_state())
+            #print(state.get_system_state())
 
-            cv2.imshow("Capture",img)
+            #cv2.imshow("Capture",img)
             writer.write(img)
 
             #wri = threading.Thread(target=write,daemon=True,args=(img,))
@@ -145,7 +144,7 @@ if __name__ == "__main__":
             print(str(e))
             
     writer.release()
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
 
     # Method 1 to terminate process
     #process = subprocess.call('/home/jlukas/Desktop/My_Project/Autonomous_Human_Follower_Drone/csh/end') 
