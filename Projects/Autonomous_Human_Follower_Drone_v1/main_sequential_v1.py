@@ -57,7 +57,7 @@ def track(info):
         state.set_system_state("search")
         state.set_time(60)
 
-def record():
+def record(cam):
     curr_timestamp = int(datetime.timestamp(datetime.now()))
     path = "/home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone/record/"
     writer= cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 30 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
@@ -82,7 +82,7 @@ def main():
     cam = Camera()
     
     # Intialize Recorder
-    writer = record()
+    writer = record(cam)
     
     # Initialize Detector
     det = Detect(cam,drone)
@@ -94,55 +94,55 @@ def main():
     # Initialize state
     state.set_system_state("takeoff")
     state.set_airborne("off")
-    
-    while drone.is_active:           
-        if (state.get_system_state() == "takeoff"):
-            takeoff()
-    
+      
     return cam, writer, det, drone
     
 if __name__ == "__main__":
     
     cam, writer, det, drone = main()
-       
-    while True:
-        # Capture Image and perform detection
-        img, id, info = det.captureimage()
-        det.track.visualise(img)
-        
-        # Search Image and Tracking
-        if (state.get_system_state() == "search"):
-            state.set_time(60)
-            search(id)
+    
+    while drone.is_active:           
+        if (state.get_system_state() == "takeoff"):
+            takeoff()
+ 
+        while True:
+            # Capture Image and perform detection
+            img, id, info = det.captureimage()
+            det.track.visualise(img)
             
-        elif (state.get_system_state() == "track"):
-            state.set_time(60)
-            track(info)
-        
-        elif (state.get_system_state() == "land"):
-            writer.release()
-            drone.control_tab.land()
-            GPIO.output(buzzer,GPIO.HIGH)
-            sleep(1)
-            GPIO.output(buzzer,GPIO.LOW)
-            sleep(1)
-        
-        elif (state.get_system_state() == "end"):
-            state.set_system_state("takeoff")
-            state.set_airborne("off")
+            # Search Image and Tracking
+            if (state.get_system_state() == "search"):
+                state.set_time(60)
+                search(id)
+                
+            elif (state.get_system_state() == "track"):
+                state.set_time(60)
+                track(info)
             
-            print("Waiting to change to GUIDED Mode")
-            
-            while not drone.vehicle.mode.name == "GUIDED":
+            elif (state.get_system_state() == "land"):
+                writer.release()
+                drone.control_tab.land()
+                GPIO.output(buzzer,GPIO.HIGH)
                 sleep(1)
-            writer = record()
-        
-        cv2.imshow("Output",img)
-        writer.write(img)
-        
-        if cv2.waitKey(1) & 0XFF == ord('q'):
-            #os.system("echo 2328 | sudo -S pkill -9 -f main.py")
-            break
+                GPIO.output(buzzer,GPIO.LOW)
+                sleep(1)
+            
+            elif (state.get_system_state() == "end"):
+                state.set_system_state("takeoff")
+                state.set_airborne("off")
+                
+                print("Waiting to change to GUIDED Mode")
+                
+                while not drone.vehicle.mode.name == "GUIDED":
+                    sleep(1)
+                writer = record()
+            
+            cv2.imshow("Output",img)
+            writer.write(img)
+            
+            if cv2.waitKey(1) & 0XFF == ord('q'):
+                #os.system("echo 2328 | sudo -S pkill -9 -f main.py")
+                break
     
     writer.release()
     cv2.destroyAllWindows()
