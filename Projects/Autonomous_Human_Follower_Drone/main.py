@@ -41,7 +41,8 @@ def takeoff():
 def search(id):
     start = time.time()
     drone.control_tab.stop_drone(altitude)
-    while time.time() - start < state.get_time():
+    #while time.time() - start < state.get_time():
+    while time.time() - start < 60:
         if (id == 1):
             state.set_system_state("track")
     state.set_system_state("land")
@@ -54,7 +55,7 @@ def track(info):
         
     else:
         state.set_system_state("search")
-        state.set_time(60)
+        #state.set_time(60)
 
 def record():
     curr_timestamp = int(datetime.timestamp(datetime.now()))
@@ -93,19 +94,19 @@ if __name__ == "__main__":
     while drone.is_active:
         try:       
             img, id, info = det.captureimage()   
-            det.track.visualise(img)    
+            #det.track.visualise(img)    
                         
             if (state.get_system_state() == "takeoff"):
                 off = threading.Thread(target=takeoff, daemon=True)
                 off.start()
             
             elif(state.get_system_state() == "search"):
-                state.set_time(60)
+                #state.set_time(60)
                 sea = threading.Thread(target=search, daemon=True, args=(id,))
                 sea.start()
                 
             elif(state.get_system_state() == "track"):
-                state.set_time(60)
+                #state.set_time(60)
                 tra = threading.Thread(target=track, daemon=True, args=(info,))
                 tra.start()
                         
@@ -130,7 +131,7 @@ if __name__ == "__main__":
             
             #print(state.get_system_state())
 
-            #cv2.imshow("Capture",img)
+            cv2.imshow("Capture",img)
             writer.write(img)
 
             #wri = threading.Thread(target=write,daemon=True,args=(img,))
@@ -144,7 +145,7 @@ if __name__ == "__main__":
             print(str(e))
             
     writer.release()
-    #cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
 
     # Method 1 to terminate process
     #process = subprocess.call('/home/jlukas/Desktop/My_Project/Autonomous_Human_Follower_Drone/csh/end') 

@@ -20,21 +20,21 @@ class Track:
         self.pid    = pid
         self.pError = pError
         
-        print(self.info[1])
+        #print(self.info[1])
         
         if ((self.info[1]) !=0):
             error = self.w//2 - self.info[0][0]
-            self.posXC   = int(self.pid[0]*error + self.pid[1]*(error-self.pError))
+            self.posXC   = (self.pid[0]*error + self.pid[1]*(error-self.pError))
             
             # 2nd Option
             #self.posX  = int(np.interp(self.posXC, [-abs(self.w//4), abs(self.w//4)], [-15,15]))
             
             # 1st Option
-            self.posX   = int(np.clip(self.posXC, -10,10))
+            self.posX   = (np.clip(self.posXC, -10,10))
                
             self.pError = error
             
-            #print(str(self.posX) + " " + str(info[1]))
+            print(str(self.posX))
             
             self.engine.executeChangesNow(0.2,0,altitude)
             self.engine.send_movement_command_YAW(self.posX)
