@@ -6,6 +6,7 @@ from video_capture import *
 from csi_camera import CSI_Camera
 
 class Camera:
+    
     def __init__(self):
         self.net = jetson.inference.detectNet("SSD-Mobilenet-v2", threshold=0.5)
         self.font = cv2.FONT_HERSHEY_SIMPLEX
@@ -14,7 +15,7 @@ class Camera:
         self.DISPLAY_HEIGHT=480
         
         self.cap = cv2.VideoCapture(self.gstreamer_pipeline_csi(flip_method=6), cv2.CAP_GSTREAMER)
-
+	
     def gstreamer_pipeline_csi(
         self,
         sensor_id=0,
@@ -41,6 +42,8 @@ class Camera:
         display_height,
         )
     )
+
+
 
 
     

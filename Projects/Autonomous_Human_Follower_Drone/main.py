@@ -63,8 +63,8 @@ def record():
     writer= cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 10 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
     return writer
 
-def write(frame):
-    writer.write(frame)
+def write(frame,w):
+    w.write(frame)
 
 if __name__ == "__main__":
     
@@ -130,9 +130,9 @@ if __name__ == "__main__":
             #print(state.get_system_state())
 
             cv2.imshow("Capture",img)
-            writer.write(img)
+            #writer.write(img)
 
-            #wri = threading.Thread(target=write,daemon=True,args=(img,))
+            #wri = threading.Thread(target=write,daemon=True,args=(img,writer))
             #wri.start()
 
             if cv2.waitKey(1) & 0XFF == ord('q'):

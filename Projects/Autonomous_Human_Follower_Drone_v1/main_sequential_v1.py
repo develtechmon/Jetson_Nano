@@ -1,10 +1,8 @@
 import cv2
-import os
-import threading
 import state
 import subprocess
 import RPi.GPIO as GPIO
-
+import os
 from time import sleep,time
 from datetime import datetime
 from sys import exit
@@ -12,12 +10,14 @@ from sys import exit
 from core import *
 from detect import *
 
-#from camera import *
-from camera_non_thread import *
+from camera import *
+#from camera_non_thread import *
 
 from track import *
 from config import *
 from lidar import *
+
+STATE = "takeoff" 
 
 os.system ('echo 2328 | sudo -S systemctl restart nvargus-daemon')
 os.system ('echo 2328 | sudo -S chmod 666 /dev/ttyTHS1')
@@ -38,15 +38,19 @@ pid     = [0.3,0.1]
 
 def takeoff():
     drone.control_tab.armAndTakeoff(altitude)
-    state.set_system_state("search")
+    #state.set_system_state("search")
+    return "search"
     
 def search(id):
     start = time.time()
     drone.control_tab.stop_drone(altitude)
     while time.time() - start < 60:
         if (id == 1):
-            state.set_system_state("track")
-    state.set_system_state("land")
+            return "track"
+            #state.set_system_state("track")
+    
+    #state.set_system_state("land")
+    return "land"
     
 def track(info):
     if (info[1]) != 0:
@@ -54,29 +58,33 @@ def track(info):
         det.track.trackobject(info,pid,pError,altitude)
 
     else:
-        state.set_system_state("search")
-        state.set_time(60)
+        #state.set_system_state("search")
+        return "search"
 
 def record():
     curr_timestamp = int(datetime.timestamp(datetime.now()))
-    path = "/home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone/record/"
+    path = "/home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone_v1/record/"
     writer= cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 30 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
     return writer
 
-def write(frame):
+def write(frame,writer):
     writer.write(frame)
 
-def core_run(img,id,info):
-    if (state.get_system_state() == "takeoff"):
+def core_run(img,id,info,writer):
+    if (STATE == "takeoff"):
+    #if (state.get_system_state() == "takeoff"):
         takeoff()
 
-    elif (state.get_system_state() == "search"):
+    elif (STATE == "search"):
+    #elif (state.get_system_state() == "search"):
         search(id)
 
-    elif (state.get_system_state() == "track"):
+    elif (STATE == "track"):
+    #elif (state.get_system_state() == "track"):
         track(info)
 
-    elif (state.get_system_state() == "land"):
+    elif (STATE == "land"):
+    #elif (state.get_system_state() == "land"):
         writer.release()
         drone.control_tab.land()
         GPIO.output(buzzer,GPIO.HIGH)
@@ -85,7 +93,8 @@ def core_run(img,id,info):
         sleep(1)
         
     elif (state.get_system_state() == "end"):
-        state.set_system_state("takeoff")
+        #state.set_system_state("takeoff")
+        STATE = "takeoff"
         state.set_airborne("off")
             
         print("Waiting to change to GUIDED Mode")
@@ -109,10 +118,10 @@ if __name__ == "__main__":
     GPIO.setup(buzzer,GPIO.OUT, initial=GPIO.LOW)
 
     # Initialize CSI Camera
-    #cam = Camera()
+    cam = Camera()
 
     # Initialize non CSI Camera
-    cam = Camera()
+    #cam = Camera()
     
     #Intialize Recorder
     writer = record()
@@ -125,16 +134,15 @@ if __name__ == "__main__":
     lidar.start()
     
     #Initialize state
-    state.set_system_state("takeoff")
+    #state.set_system_state("takeoff")
     state.set_airborne("off")
-    
     while drone.is_active:
 
         # Capture Image and perform detection
-        #img, id, info = det.captureimage()
+        img, id, info = det.captureimage_csi()
 
         # Capture Image using non-csi
-        img,id,info = det.captureimage_non_csi()
+        #img,id,info = det.captureimage_non_csi()
 
         # Search and Track run using separate thread or class (?).
         # Using Class Thread 
@@ -142,13 +150,17 @@ if __name__ == "__main__":
         #core.start()
 
         # Using Thread
-        core_in = threading.Thread(target=core_run,daemon=True, args=(img,id,info))
+        core_in = threading.Thread(target=core_run,daemon=True, args=(img,id,info,writer))
         core_in.start()
                 
-        det.track.visualise(img)   
+        #det.track.visualise(img)   
 
         cv2.imshow("Output",img)
-        writer.write(img)
+        
+        #record = threading.Thread(target=write,daemon=True,args=(img,writer,))
+        #record.start()
+
+        #writer.write(img)
         
         if cv2.waitKey(1) & 0XFF == ord('q'):
             break

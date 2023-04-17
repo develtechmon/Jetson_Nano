@@ -10,11 +10,11 @@ class Drone:
     def __init__(self):
         try:
             '''Gazebo'''
-            self.connection_string = '192.168.8.121:14553'
+            #self.connection_string = '192.168.8.121:14553'
 
             '''SiTL'''
             '''Run sim_vehicle.py --console --map'''
-            #self.connection_string = '127.0.0.1:14550'
+            self.connection_string = '127.0.0.1:14550'
             
             '''Jetson Nano TX RX'''
             #self.connection_string = '/dev/ttyTHS1,921600'

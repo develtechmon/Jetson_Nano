@@ -9,7 +9,7 @@ import numpy as np
 class Detect:
     def __init__(self,cam,D):
         self.c         = cam.initializecamera()
-        self.c_non_csi = cam.cap
+        #self.c_non_csi = cam.cap
         self.net       = cam.net
         self.w         = cam.DISPLAY_WIDTH
         self.h         = cam.DISPLAY_HEIGHT
@@ -72,7 +72,7 @@ class Detect:
         while True:     
             myobjectlistC = []
             myobjectlistArea = []
-            img        = self.c_non_csi.read()
+            success, img = self.c_non_csi.read()
             height     = img.shape[0]
             width      = img.shape[1]
             frame      = cv2.cvtColor(img,cv2.COLOR_BGR2RGBA).astype(np.float32)

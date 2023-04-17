@@ -1,8 +1,9 @@
-import threading
-import numpy as np
-import state
-from time import sleep,time
+from time import sleep
+import time
 from datetime import datetime
+import numpy as np
+import threading
+import state
 #import cv2
 
 class Core(threading.Thread):
@@ -15,7 +16,7 @@ class Core(threading.Thread):
         self.det = det
         self.pid = pid
         self.pError = perror
-        self.writer = writer
+        #self.writer = writer
 
         self.img = img
         self.id = id
@@ -57,7 +58,7 @@ class Core(threading.Thread):
                 self.track(self.info)
 
             elif (state.get_system_state() == "land"):
-                self.writer.release()
+                #self.writer.release()
                 self.drone.control_tab.land()
 
             elif (state.get_system_state() == "end"):
@@ -68,15 +69,15 @@ class Core(threading.Thread):
             
                 while not self.drone.vehicle.mode.name == "GUIDED":
                     sleep(1)
-                self.writer = self.record()
+                #self.writer = self.record()
             
             #cv2.imshow("output",img)
-            self.writer.writer(self.img)
+            #self.writer.writer(self.img)
 
             #if cv2.waitKey(1) & 0XFF == ord('q'):
             #    break
 
-        self.writer.release()
+        #self.writer.release()
         #cv2.destroyAllWindows()
         
 
