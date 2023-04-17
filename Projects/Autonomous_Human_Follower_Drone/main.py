@@ -26,10 +26,10 @@ altitude = 1.5
 buzzer=19
 
 # 1st Option 
-#pid      = [0.1,0.1]
+pid      = [0.1,0.1]
 
 # 2nd Option
-pid     = [0.3,0.1]
+#pid     = [0.3,0.1]
 
 # 3rd Option
 #pid     = [0.5,0.4]
@@ -101,12 +101,10 @@ if __name__ == "__main__":
                 off.start()
             
             elif(state.get_system_state() == "search"):
-                #state.set_time(60)
                 sea = threading.Thread(target=search, daemon=True, args=(id,))
                 sea.start()
                 
             elif(state.get_system_state() == "track"):
-                #state.set_time(60)
                 tra = threading.Thread(target=track, daemon=True, args=(info,))
                 tra.start()
                         

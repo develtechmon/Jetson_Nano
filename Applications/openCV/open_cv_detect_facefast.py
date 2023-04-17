@@ -45,7 +45,7 @@ def face_detect():
             sensor_id=0,
             sensor_mode=SENSOR_MODE_720,
             framerate=30,
-            flip_method=0,
+            flip_method=6, #0
             display_height=DISPLAY_HEIGHT,
             display_width=DISPLAY_WIDTH,
     )
