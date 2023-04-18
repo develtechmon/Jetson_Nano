@@ -1,7 +1,8 @@
 import cv2
 import state
 import subprocess
-import RPi.GPIO as GPIO
+import queue
+
 import os
 from time import sleep,time
 from datetime import datetime
@@ -16,6 +17,7 @@ from camera import *
 from track import *
 from config import *
 from lidar import *
+from buzzer import *
 
 STATE = "takeoff" 
 
@@ -24,8 +26,6 @@ os.system ('echo 2328 | sudo -S chmod 666 /dev/ttyTHS1')
 
 pError   = 0
 altitude = 1.5
-
-buzzer=19
 
 # 1st Option 
 #pid      = [0.1,0.1]
@@ -38,19 +38,15 @@ pid     = [0.3,0.1]
 
 def takeoff():
     drone.control_tab.armAndTakeoff(altitude)
-    #state.set_system_state("search")
-    return "search"
+    state.set_system_state("search")
     
 def search(id):
     start = time.time()
     drone.control_tab.stop_drone(altitude)
     while time.time() - start < 60:
         if (id == 1):
-            return "track"
-            #state.set_system_state("track")
-    
-    #state.set_system_state("land")
-    return "land"
+            state.set_system_state("track")
+    state.set_system_state("land")
     
 def track(info):
     if (info[1]) != 0:
@@ -58,51 +54,63 @@ def track(info):
         det.track.trackobject(info,pid,pError,altitude)
 
     else:
-        #state.set_system_state("search")
-        return "search"
+        state.set_system_state("search")
 
-def record():
+def write_video(frame_queue):
     curr_timestamp = int(datetime.timestamp(datetime.now()))
     path = "/home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone_v1/record/"
-    writer= cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 30 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
-    return writer
+    out = cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 10 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
+    
+    while True:
+        #Get the next frame from the queue
+        frame = frame_queue.get()
 
-def write(frame,writer):
-    writer.write(frame)
+        # If we recieve None, we're done
+        if frame is None:
+            break
 
-def core_run(img,id,info,writer):
-    if (STATE == "takeoff"):
-    #if (state.get_system_state() == "takeoff"):
+        # Write the frame to the output video
+        out.write(frame)
+
+    # Release the VideoWriter
+    out.release()
+
+
+def core_run(img,id,info):
+    if (state.get_system_state() == "takeoff"):
         takeoff()
 
-    elif (STATE == "search"):
-    #elif (state.get_system_state() == "search"):
+    elif (state.get_system_state() == "search"):
         search(id)
 
-    elif (STATE == "track"):
-    #elif (state.get_system_state() == "track"):
+    elif (state.get_system_state() == "track"):
         track(info)
 
-    elif (STATE == "land"):
-    #elif (state.get_system_state() == "land"):
-        writer.release()
+    elif (state.get_system_state() == "land"):
         drone.control_tab.land()
-        GPIO.output(buzzer,GPIO.HIGH)
-        sleep(1)
-        GPIO.output(buzzer,GPIO.LOW)
-        sleep(1)
+        frame_queue.put(None)
+        
+        alarm()
         
     elif (state.get_system_state() == "end"):
-        #state.set_system_state("takeoff")
-        STATE = "takeoff"
+        state.set_system_state("takeoff")
         state.set_airborne("off")
             
         print("Waiting to change to GUIDED Mode")
             
         while not drone.vehicle.mode.name == "GUIDED":
             sleep(1)
-        writer = record()
-    
+        
+        rec = threading.Thread(target=write_video, args=(frame_queue,))
+        rec.start()
+
+# Create a queue to hold the frames
+frame_queue = queue.Queue()
+
+# Create a new thread to write the video
+rec = threading.Thread(target=write_video, args=(frame_queue,))
+rec.start()
+
 if __name__ == "__main__":
     
     while True:
@@ -113,19 +121,12 @@ if __name__ == "__main__":
         except Exception as e:
             sleep(2)
     
-    # Intialize Buzzer
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(buzzer,GPIO.OUT, initial=GPIO.LOW)
-
     # Initialize CSI Camera
     cam = Camera()
 
     # Initialize non CSI Camera
     #cam = Camera()
-    
-    #Intialize Recorder
-    writer = record()
-    
+        
     #Initialize Detector
     det = Detect(cam,drone)
     
@@ -134,7 +135,7 @@ if __name__ == "__main__":
     lidar.start()
     
     #Initialize state
-    #state.set_system_state("takeoff")
+    state.set_system_state("takeoff")
     state.set_airborne("off")
     while drone.is_active:
 
@@ -150,22 +151,25 @@ if __name__ == "__main__":
         #core.start()
 
         # Using Thread
-        core_in = threading.Thread(target=core_run,daemon=True, args=(img,id,info,writer))
+        core_in = threading.Thread(target=core_run,daemon=True, args=(img,id,info,))
         core_in.start()
                 
         #det.track.visualise(img)   
 
-        cv2.imshow("Output",img)
-        
-        #record = threading.Thread(target=write,daemon=True,args=(img,writer,))
-        #record.start()
+        frame_queue.put(img)
 
-        #writer.write(img)
-        
+        cv2.imshow("Output",img)
+                
         if cv2.waitKey(1) & 0XFF == ord('q'):
             break
     
-    writer.release()
+    # Add a None to the queue to signal the end of the video
+    frame_queue.put(None)
+
+    # Finish the record thread
+    rec.join()     
+
+    #writer.release()
     cv2.destroyAllWindows()
             
             

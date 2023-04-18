@@ -5,7 +5,7 @@ import os
 import threading
 import state
 import subprocess
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 
 from time import sleep,time
 from datetime import datetime
