@@ -1,4 +1,5 @@
 import cv2
+import queue
 import sys
 import os
 import threading
@@ -9,13 +10,13 @@ import RPi.GPIO as GPIO
 from time import sleep,time
 from datetime import datetime
 from sys import exit
-import keyboard as kp
 
 from detect import *
 from camera import *
 from track import *
 from config import *
 from lidar import *
+from buzzer import *
 
 os.system ('echo 2328 | sudo -S systemctl restart nvargus-daemon')
 os.system ('echo 2328 | sudo -S chmod 666 /dev/ttyTHS1')
@@ -23,7 +24,7 @@ os.system ('echo 2328 | sudo -S chmod 666 /dev/ttyTHS1')
 pError   = 0
 altitude = 1.5
 
-buzzer=19
+# buzzer=19
 
 # 1st Option 
 pid      = [0.1,0.1]
@@ -41,30 +42,52 @@ def takeoff():
 def search(id):
     start = time.time()
     drone.control_tab.stop_drone(altitude)
-    #while time.time() - start < state.get_time():
     while time.time() - start < 60:
         if (id == 1):
             state.set_system_state("track")
     state.set_system_state("land")
     
 def track(info):
-    #print(info[1])
     if (info[1]) != 0:
         state.set_airborne("on")
         det.track.trackobject(info,pid,pError,altitude)
         
     else:
         state.set_system_state("search")
-        #state.set_time(60)
 
-def record():
+# def record():
+#     curr_timestamp = int(datetime.timestamp(datetime.now()))
+#     path = "/home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone/record/"
+#     writer= cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 10 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
+#     return writer
+
+def write_video(frame_queue):
     curr_timestamp = int(datetime.timestamp(datetime.now()))
     path = "/home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone/record/"
-    writer= cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 10 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
-    return writer
+    out = cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 10 ,(cam.DISPLAY_WIDTH,cam.DISPLAY_HEIGHT))
+    
+    #out = record()
 
-def write(frame,w):
-    w.write(frame)
+    while True:
+        #Get the next frame from the queue
+        frame = frame_queue.get()
+
+        # If we recieve None, we're done
+        if frame is None:
+            break
+
+        # Write the frame to the output video
+        out.write(frame)
+
+    # Release the VideoWriter
+    out.release()
+
+# Create a queue to hold the frames
+frame_queue = queue.Queue()
+
+# Create a new thread to write the video
+rec = threading.Thread(target=write_video, args=(frame_queue,))
+rec.start()
 
 if __name__ == "__main__":
     
@@ -76,13 +99,13 @@ if __name__ == "__main__":
         except Exception as e:
             sleep(2)
     
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(buzzer, GPIO.OUT, initial=GPIO.LOW)
+    # GPIO.setmode(GPIO.BOARD)
+    # GPIO.setup(buzzer, GPIO.OUT, initial=GPIO.LOW)
 
     cam = Camera()
 
-    writer = record()
-   
+    #writer = record()
+
     det   = Detect(cam,drone)
     
     lidar = Lidar(drone,altitude)
@@ -110,12 +133,17 @@ if __name__ == "__main__":
                         
             elif(state.get_system_state() == "land"):
                 drone.control_tab.land()
+
                 #cv2.destroyAllWindows()
-                writer.release()
-                GPIO.output(buzzer,GPIO.HIGH)
-                sleep(2)
-                GPIO.output(buzzer,GPIO.LOW)
-                sleep(1)
+                #writer.release()
+                frame_queue.put(None)
+
+                alarm()
+
+                # GPIO.output(buzzer,GPIO.HIGH)
+                # sleep(2)
+                # GPIO.output(buzzer,GPIO.LOW)
+                # sleep(1)
 
             elif(state.get_system_state() == "end"):
                 state.set_system_state("takeoff")
@@ -125,15 +153,15 @@ if __name__ == "__main__":
                 
                 while not drone.vehicle.mode.name == "GUIDED":
                     sleep(1)
-                writer = record()
+
+                #writer = record()
+                rec = threading.Thread(target=write_video, args=(frame_queue,))
+                rec.start()
             
-            #print(state.get_system_state())
+            frame_queue.put(img)
 
             cv2.imshow("Capture",img)
             #writer.write(img)
-
-            #wri = threading.Thread(target=write,daemon=True,args=(img,writer))
-            #wri.start()
 
             if cv2.waitKey(1) & 0XFF == ord('q'):
                #os.system("echo 2328 | sudo -S pkill -9 -f main.py")
@@ -141,8 +169,14 @@ if __name__ == "__main__":
             
         except Exception as e:
             print(str(e))
-            
-    writer.release()
+
+    # Add a None to the queue to signal the end of the video
+    frame_queue.put(None)
+
+    # Finish the record thread
+    rec.join()     
+
+    #writer.release()
     cv2.destroyAllWindows()
 
     # Method 1 to terminate process

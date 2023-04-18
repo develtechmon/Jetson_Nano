@@ -1,21 +1,14 @@
 import RPi.GPIO as GPIO
-import time
-
+from time import sleep
 
 buzzer_pin = 19
 
-def main():
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(buzzer_pin, GPIO.OUT, initial=GPIO.LOW)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(buzzer_pin, GPIO.OUT, initial=GPIO.LOW)
 
-    while True:
-        GPIO.output(buzzer_pin,GPIO.HIGH)
-        print("Beep")
-        time.sleep(1)
-        GPIO.output(buzzer_pin,GPIO.LOW)
-        print("Off")
-        time.sleep(1)
-
-if __name__ == '__main__':
-    main()
+def alarm():
+    GPIO.output(buzzer_pin,GPIO.HIGH)
+    sleep(2)
+    GPIO.output(buzzer_pin,GPIO.LOW)
+    sleep(1)
 
