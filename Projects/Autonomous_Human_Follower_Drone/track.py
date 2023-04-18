@@ -13,28 +13,28 @@ class Track:
         self.h       = cam.DISPLAY_HEIGHT  
         self.engine  = D.engines 
         self.control = D.control_tab
-        #self.lidar   = D.lidar
-     
+         
     def trackobject(self,info,pid,pError,altitude):
         self.info   = info
         self.pid    = pid
         self.pError = pError
         
-        #print(self.info[1])
-        
         if ((self.info[1]) !=0):
-            error = self.w//2 - self.info[0][0]
+            #error = self.w//2 - self.info[0][0][0]
+            error = self.w/2 - self.info[0][0]
+
             self.posXC   = (self.pid[0]*error + self.pid[1]*(error-self.pError))
             
             # 2nd Option
-            #self.posX  = (np.interp(self.posXC, [-self.w//4, self.w//4], [-15,15]))
+            self.posX  = (np.interp(self.posXC, [-self.w//4, self.w//4], [-40,40]))
             
             # 1st Option
-            self.posX   = (np.clip(self.posXC, -15,15))
+            #self.posX   = (np.clip(self.posXC, -15, 15))
                
             self.pError = error
             
-            print(str(self.posX))
+            #print(error)
+            #print(str(self.posX))
             
             self.engine.executeChangesNow(0.2,0,altitude)
             self.engine.send_movement_command_YAW(self.posX)

@@ -53,11 +53,13 @@ class Detect:
 		                
             if len(myobjectlistArea) !=0:
                 if ID==1:
-                    #print(area)
                     cv2.rectangle(img,(left,top),(right,bottom),(0,255,0),3)
                     cv2.circle(img, (int(cx), int(cy)), 10, (0, 0, 255), thickness=-1, lineType=8, shift=0)
                     cv2.line(img, (self.w//2, int(cy)), (int(cx),int(cy)), (255,0,255),3)
                     cv2.putText(img,user,(left+3,top-10),self.f,.95,(248, 254, 0),3)
+                    
+                    #return img, ID,[myobjectlistC,myobjectlistArea]
+                    
                     i = myobjectlistArea.index(max(myobjectlistArea))
                     return img, ID,[myobjectlistC[i],myobjectlistArea[i]]
                 
