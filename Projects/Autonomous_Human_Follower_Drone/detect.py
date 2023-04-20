@@ -1,6 +1,7 @@
 import jetson.inference
 import jetson.utils
 from track import *
+import numpy as np
 import cv2
 from csi_camera import CSI_Camera
 
@@ -48,8 +49,14 @@ class Detect:
                 user = "Luke"
                 cx   = location[0]
                 cy   = location[1]
-                myobjectlistArea.append(area)
-                myobjectlistC.append([cx,cy])
+
+                # Using Numpy
+                myobjectlistArea = np.append(myobjectlistArea,area)
+                myobjectlistC = np.append(myobjectlistC,[cx,cy])
+                
+                # Using List
+                #myobjectlistArea.append(area)
+                #myobjectlistC.append([cx,cy])
 		                
             if len(myobjectlistArea) !=0:
                 if ID==1:
@@ -60,12 +67,14 @@ class Detect:
                     
                     #return img, ID,[myobjectlistC,myobjectlistArea]
                     
-                    i = myobjectlistArea.index(max(myobjectlistArea))
-                    return img, ID,[myobjectlistC[i],myobjectlistArea[i]]
-                
-                #else:
-                #    return img,ID,[[0,0],0]
-                      
+                    # Using Numpy
+                    i = np.argmax(myobjectlistArea)
+                    return (img, ID,[[myobjectlistC[i], myobjectlistC[i+1]], myobjectlistArea[i]])
+
+                    # Using List
+                    #i = myobjectlistArea.index(max(myobjectlistArea))
+                    #return img, ID,[myobjectlistC[i],myobjectlistArea[i]]
+                                 
             else:
                 return img, ID,[[0,0],0]
             

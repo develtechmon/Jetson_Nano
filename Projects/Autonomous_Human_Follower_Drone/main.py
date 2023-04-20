@@ -5,6 +5,7 @@ import os
 import threading
 import state
 import subprocess
+import record
 
 from time import sleep,time
 from datetime import datetime
@@ -52,30 +53,14 @@ def track(info):
     else:
         state.set_system_state("search")
 
-def write_video(frame_queue):
-    curr_timestamp = int(datetime.timestamp(datetime.now()))
-    path = "/home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone/record/"
-    out = cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 10 ,(640,480))
-    
-    while True:
-        #Get the next frame from the queue
-        frame = frame_queue.get()
-
-        # If we recieve None, we're done
-        if frame is None:
-            break
-
-        # Write the frame to the output video
-        out.write(frame)
-
-    # Release the VideoWriter
-    out.release()
+# Previously "write_video" function is here
 
 # Create a queue to hold the frames
 frame_queue = queue.Queue()
 
 # Create a new thread to write the video
-rec = threading.Thread(target=write_video, args=(frame_queue,))
+# rec = threading.Thread(target=write_video, args=(frame_queue,))
+rec = threading.Thread(target=record.write_video, args=(frame_queue,))
 rec.start()
 
 if __name__ == "__main__":
@@ -88,7 +73,7 @@ if __name__ == "__main__":
         except Exception as e:
             sleep(2)
     
-    cam = Camera()
+    cam   = Camera()
     det   = Detect(cam,drone)
     
     lidar = Lidar(drone,altitude)
@@ -106,22 +91,22 @@ if __name__ == "__main__":
                 off = threading.Thread(target=takeoff, daemon=True)
                 off.start()
             
-            if(state.get_system_state() == "search"):
+            elif(state.get_system_state() == "search"):
                 sea = threading.Thread(target=search, daemon=True, args=(id,))
                 sea.start()
                 
-            if(state.get_system_state() == "track"):
+            elif(state.get_system_state() == "track"):
                 tra = threading.Thread(target=track, daemon=True, args=(info,))
                 tra.start()
                         
-            if(state.get_system_state() == "land"):
+            elif(state.get_system_state() == "land"):
                 drone.control_tab.land()
 
                 frame_queue.put(None)
 
                 alarm()
 
-            if(state.get_system_state() == "end"):
+            elif(state.get_system_state() == "end"):
                 state.set_system_state("takeoff")
                 state.set_airborne("off")
                 
@@ -130,12 +115,13 @@ if __name__ == "__main__":
                 while not drone.vehicle.mode.name == "GUIDED":
                     sleep(1)
 
-                rec = threading.Thread(target=write_video, args=(frame_queue,))
+                #rec = threading.Thread(target=write_video, args=(frame_queue,))
+                rec = threading.Thread(target=record.write_video, args=(frame_queue,))
                 rec.start()
             
             frame_queue.put(img)
 
-            #cv2.imshow("Capture",img)
+            cv2.imshow("Capture",img)
 
             if cv2.waitKey(1) & 0XFF == ord('q'):
                break
@@ -152,7 +138,6 @@ if __name__ == "__main__":
     sea.join()
     tra.join()
 
-    #writer.release()
     cv2.destroyAllWindows()
 
     # Method 1 to terminate process

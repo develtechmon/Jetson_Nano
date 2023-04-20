@@ -20,9 +20,7 @@ class Track:
         self.pError = pError
         
         if ((self.info[1]) !=0):
-            #error = self.w//2 - self.info[0][0][0]
             error = self.w/2 - self.info[0][0]
-
             self.posXC   = (self.pid[0]*error + self.pid[1]*(error-self.pError))
             
             # 2nd Option

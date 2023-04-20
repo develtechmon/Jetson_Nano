@@ -1,2 +1,0 @@
-#! /bin/bash
-echo 2328 | sudo -S pkill -9 -f main.py
