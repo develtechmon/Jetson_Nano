@@ -62,34 +62,34 @@ class Detect:
                 #myobjectlistArea.append(area)
                 #myobjectlistC.append([cx,cy])
 		                
-            if len(myobjectlistArea) !=0:
-                if ID==1:
-                    cv2.rectangle(img,(left,top),(right,bottom),(0,255,0),3)
-                    cv2.circle(img, (int(cx), int(cy)), 10, (0, 0, 255), thickness=-1, lineType=8, shift=0)
-                    cv2.line(img, (self.w//2, int(cy)), (int(cx),int(cy)), (255,0,255),3)
-                    cv2.putText(img,user,(left+3,top-10),self.f,.95,(248, 254, 0),3)
-                    
-                    #return img, ID,[myobjectlistC,myobjectlistArea]
-                    
-                    # Using Numpy
-                    i = np.argmax(myobjectlistArea)
-                    
-                    info = ([myobjectlistC, myobjectlistArea])
-                    
-                    print("\ninfo >> ", info)
-                    print("Cx >> ", info[0][0])
-                    print("Cy >> ", info[0][1])
-                    print("Area >> ", info[1])
-                     
-                    #return (img, ID,[myobjectlistC, myobjectlistArea])
-                    return (img, ID,[[myobjectlistC[i], myobjectlistC[i+1]], myobjectlistArea[i]])
+                if len(myobjectlistArea) !=0:
+                    if ID==1:
+                        cv2.rectangle(img,(left,top),(right,bottom),(0,255,0),3)
+                        cv2.circle(img, (int(cx), int(cy)), 10, (0, 0, 255), thickness=-1, lineType=8, shift=0)
+                        cv2.line(img, (self.w//2, int(cy)), (int(cx),int(cy)), (255,0,255),3)
+                        cv2.putText(img,user,(left+3,top-10),self.f,.95,(248, 254, 0),3)
+                        
+                        #return img, ID,[myobjectlistC,myobjectlistArea]
+                        
+                        # Using Numpy
+                        i = np.argmax(myobjectlistArea)
+                        
+                        info = ([myobjectlistC, myobjectlistArea])
+                        
+                        print("\ninfo >> ", info)
+                        print("Cx >> ", info[0][0])
+                        print("Cy >> ", info[0][1])
+                        print("Area >> ", info[1])
+                        
+                        #return (img, ID,[myobjectlistC, myobjectlistArea])
+                        return (img, ID,[[myobjectlistC[i], myobjectlistC[i+1]], myobjectlistArea[i]])
 
-                    # Using List
-                    #i = myobjectlistArea.index(max(myobjectlistArea))
-                    #return img, ID,[myobjectlistC[i],myobjectlistArea[i]]
-                                 
-            else:
-                return img, ID,[[0,0],0]
+                        # Using List
+                        #i = myobjectlistArea.index(max(myobjectlistArea))
+                        #return img, ID,[myobjectlistC[i],myobjectlistArea[i]]
+                                    
+                else:
+                    return img, ID,[[0,0],0]
             
             
                 
