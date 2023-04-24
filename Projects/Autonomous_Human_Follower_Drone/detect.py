@@ -26,8 +26,12 @@ class Detect:
       
     def captureimage(self):
         while True:     
-            myobjectlistC = []
-            myobjectlistArea = []
+            #myobjectlistC = []
+            #myobjectlistArea = []
+            
+            myobjectlistC = np.zeros((2,2))
+            myobjectlistArea = np.zeros((2,2))
+
             img        = self.read_camera(self.c,True)
             height     = img.shape[0]
             width      = img.shape[1]
@@ -71,7 +75,8 @@ class Detect:
                     i = np.argmax(myobjectlistArea)
                     
                     info = ([myobjectlistC, myobjectlistArea])
-                    print("\ninfo >> ", info[0])
+                    
+                    print("\ninfo >> ", info)
                     print("Cx >> ", info[0][0])
                     print("Cy >> ", info[0][1])
                     print("Area >> ", info[1])
