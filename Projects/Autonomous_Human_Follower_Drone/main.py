@@ -82,9 +82,11 @@ if __name__ == "__main__":
     state.set_system_state("takeoff")
     state.set_airborne("off")
 
+    img, id, info = det.captureimage()   
+    
     while drone.is_active:
         try:       
-            img, id, info = det.captureimage()   
+            #img, id, info = det.captureimage()   
             #det.track.visualise(img)    
                         
             if (state.get_system_state() == "takeoff"):

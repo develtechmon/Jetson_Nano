@@ -5,7 +5,7 @@ from datetime import datetime
 def write_video(frame_queue):
     curr_timestamp = int(datetime.timestamp(datetime.now()))
     path = "/home/jlukas/Desktop/My_Project/Jetson_Nano/Projects/Autonomous_Human_Follower_Drone/record/"
-    out = cv2.VideoWriter(path + "record" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 10 ,(640,480))
+    out = cv2.VideoWriter(path + "record_queue" + str(curr_timestamp) + '.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 10 ,(640,480))
     
     while True:
         #Get the next frame from the queue
