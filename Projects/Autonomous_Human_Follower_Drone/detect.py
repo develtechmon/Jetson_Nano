@@ -69,7 +69,8 @@ class Detect:
                     
                     # Using Numpy
                     i = np.argmax(myobjectlistArea)
-                    return (img, ID,[[myobjectlistC[i], myobjectlistC[i+1]], myobjectlistArea[i]])
+                    return (img, ID,[myobjectlistC, myobjectlistArea])
+                    #return (img, ID,[[myobjectlistC[i], myobjectlistC[i+1]], myobjectlistArea[i]])
 
                     # Using List
                     #i = myobjectlistArea.index(max(myobjectlistArea))
