@@ -81,8 +81,8 @@ class Detect:
                         print("Cy >> ", info[0][1])
                         print("Area >> ", info[1])
                         
-                        #return (img, ID,[myobjectlistC, myobjectlistArea])
-                        return (img, ID,[[myobjectlistC[i], myobjectlistC[i+1]], myobjectlistArea[i]])
+                        return (img, ID,[myobjectlistC, myobjectlistArea])
+                        #return (img, ID,[[myobjectlistC[i], myobjectlistC[i+1]], myobjectlistArea[i]])
 
                         # Using List
                         #i = myobjectlistArea.index(max(myobjectlistArea))
