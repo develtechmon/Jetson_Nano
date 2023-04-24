@@ -26,11 +26,11 @@ class Detect:
       
     def captureimage(self):
         while True:     
-            myobjectlistC = []
-            myobjectlistArea = []
+            #myobjectlistC = []
+            #myobjectlistArea = []
             
-            #myobjectlistC = np.zeros((2,2))
-            #myobjectlistArea = np.zeros((2,2))
+            myobjectlistC = np.array([])
+            myobjectlistArea = np.array([])
 
             img        = self.read_camera(self.c,True)
             height     = img.shape[0]
