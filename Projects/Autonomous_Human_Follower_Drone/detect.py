@@ -69,6 +69,13 @@ class Detect:
                     
                     # Using Numpy
                     i = np.argmax(myobjectlistArea)
+                    
+                    info = ([myobjectlistC, myobjectlistArea])
+                    print("\ninfo >> ", info[0])
+                    print("Cx >> ", info[0][0])
+                    print("Cy >> ", info[0][1])
+                    print("Area >> ", info[1])
+                     
                     return (img, ID,[myobjectlistC, myobjectlistArea])
                     #return (img, ID,[[myobjectlistC[i], myobjectlistC[i+1]], myobjectlistArea[i]])
 
