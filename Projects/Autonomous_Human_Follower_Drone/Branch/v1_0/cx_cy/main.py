@@ -78,7 +78,6 @@ if __name__ == "__main__":
 
     state.set_system_state("takeoff")
     state.set_airborne("off")
-
     
     while drone.is_active:
         try:       
@@ -98,10 +97,8 @@ if __name__ == "__main__":
                 tra.start()
                         
             elif(state.get_system_state() == "land"):
-                drone.control_tab.land()
-
                 frame_queue.put(None)
-
+                drone.control_tab.land()
                 alarm()
 
             elif(state.get_system_state() == "end"):
