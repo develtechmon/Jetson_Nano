@@ -37,7 +37,7 @@ class Lidar(threading.Thread):
                     #print(self.distance)
                     
                 if (self.distance < 1.3) and (state.get_airborne() == "on"):
-                    self.engine.executeChangesNow(-0.2,0,self.altitude)
+                    self.engine.executeChangesNow(-0.3,0,self.altitude)
                     self.engine.send_movement_command_YAW(0)
                                 
     def read_tfluna_data(self):

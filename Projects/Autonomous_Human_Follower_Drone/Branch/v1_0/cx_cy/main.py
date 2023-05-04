@@ -115,7 +115,7 @@ if __name__ == "__main__":
             
             frame_queue.put(img)
 
-            cv2.imshow("Capture",img)
+            #cv2.imshow("Capture",img)
 
             if cv2.waitKey(1) & 0XFF == ord('q'):
                break
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     sea.join()
     tra.join()
 
-    cv2.destroyAllWindows()
+    #cv2.destroyAllWindows()
 
     # Method 1 to terminate process
     #process = subprocess.call('/home/jlukas/Desktop/My_Project/Autonomous_Human_Follower_Drone/csh/end') 
